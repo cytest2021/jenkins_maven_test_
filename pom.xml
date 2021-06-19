@@ -9,17 +9,24 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
+        <aspectj.version>1.9.1</aspectj.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <project.compiler.encoding>UTF-8</project.compiler.encoding>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
     </properties>
-
 
     <dependencies>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>7.0.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>2.12.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -37,6 +44,38 @@
                         <!-- testng配置文件名称 -->
                         <suiteXmlFile>testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
+                    <!--设置参数命令行 -->
+                    <argLine>
+                        <!-- UTF-8编码 -->
+                        -Dfile.encoding=UTF-8
+                        <!-- 配置拦截器 -->
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                    </argLine>
+
+                    <systemProperties>
+                        <property>
+                            <!-- 配置 allure 结果存储路径 -->
+                            <name>allure.results.directory</name>
+                            <value>${project.build.directory}/allure-results</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+                <dependencies>
+                    <!-- aspectjweaver maven坐标 -->
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>${aspectj.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <!-- 确保maven工程JDK版本为1.8，不会变 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
             </plugin>
         </plugins>
